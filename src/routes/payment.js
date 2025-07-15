@@ -8,6 +8,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   try {
     const { membershipType } = req.body;
     const { firstName, lastName, email } = req.user;
+
     const order = await razorpayInstance.orders.create({
       amount: membershipAmount[membershipType] * 100,
       currency: "INR",
@@ -19,6 +20,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
         membershipType: membershipType,
       },
     });
+
+    console.log(order);
     //Save it in Data-Base
     const payment = new Payment({
       userId: req.user.id,
@@ -33,7 +36,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     const savedPayment = await payment.save();
     //Retrurn back the order Details
 
-    res.json({ ...savedPayment.toJSON() });
+    res.json({ ...savedPayment.toJSON(), keyId: process.env.RAZORPAY_KEY_ID });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
   }

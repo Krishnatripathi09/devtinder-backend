@@ -30,16 +30,19 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    notes:{
-        firstName:{
-            type:String,
-        },
-        lastName:{
-            type:String,
-        },
-        membershipType:{
-            type:String,
-        },
+    notes: {
+      firstName: {
+        type: String,
+      },
+      lastName: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
+      membershipType: {
+        type: String,
+      },
     },
   },
   { timestamps: true }
