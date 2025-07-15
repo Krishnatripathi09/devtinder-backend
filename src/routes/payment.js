@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const paymentRouter = express.Router();
 const razorpayInstance = require("../utils/razorpay");
+const Payment = require("../models/payment");
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   try {
     const order = await razorpayInstance.orders.create({
@@ -15,9 +16,20 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
       },
     });
     //Save it in Data-Base
+    const payment = new Payment({
+      userId: req.user.id,
+      orderId: order.id,
+      status: order.status,
+      amount: order.amount,
+      currency: order.currency,
+      receipt: order.receipt,
+      notes: order.notes,
+    });
 
+    const savedPayment = await payment.save();
     //Retrurn back the order Details
-    console.log(order);
+
+    res.json({ ...savedPayment });
   } catch (error) {}
 });
 
