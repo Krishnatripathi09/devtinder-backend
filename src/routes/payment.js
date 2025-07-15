@@ -3,16 +3,20 @@ const { userAuth } = require("../middlewares/auth");
 const paymentRouter = express.Router();
 const razorpayInstance = require("../utils/razorpay");
 const Payment = require("../models/payment");
+const { membershipAmount } = require("../utils/constants");
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   try {
+    const { membershipType } = req.body;
+    const { firstName, lastName, email } = req.user;
     const order = await razorpayInstance.orders.create({
-      amount: 80000,
+      amount: membershipAmount[membershipType] * 100,
       currency: "INR",
       receipt: "receipt#1",
       notes: {
-        firstName: "value3",
-        lastName: "value2",
-        membershipType: "Silver",
+        firstName,
+        lastName,
+        email,
+        membershipType: membershipType,
       },
     });
     //Save it in Data-Base
@@ -29,8 +33,10 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     const savedPayment = await payment.save();
     //Retrurn back the order Details
 
-    res.json({ ...savedPayment });
-  } catch (error) {}
+    res.json({ ...savedPayment.toJSON() });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
 });
 
 module.exports = paymentRouter;
