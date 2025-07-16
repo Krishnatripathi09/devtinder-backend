@@ -4,6 +4,9 @@ const paymentRouter = express.Router();
 const razorpayInstance = require("../utils/razorpay");
 const Payment = require("../models/payment");
 const { membershipAmount } = require("../utils/constants");
+const {
+  validateWebhookSignature,
+} = require("razorpay/dist/utils/razorpay-utils");
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   try {
     const { membershipType } = req.body;
@@ -42,4 +45,15 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   }
 });
 
+paymentRouter.post("/payment/webhook", async (req, res) => {
+  try {
+    validateWebhookSignature(
+      JSON.stringify(webhookBody),
+      validateWebhookSignature,
+      process.env.RAZORPAY_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 module.exports = paymentRouter;
