@@ -464,3 +464,38 @@ Enums are helpful if there are a definite number of fixed values for any one var
 
 # Updated the Sign-up API
 Updated the sign Up API by setting JWT token when a user signs-up and redirecting him to /Profile page
+
+# Starting our Application on Server:
+pm2 start npm --start // To start the Application 24/7
+
+pm2 logs // To check ths logs for Anay Issues
+
+pm2 flush npm // this command is used to Flush the Logs where npm is the name of the Application for which we want to flush the logs:
+
+pm2 list // It will show the name of the processes ruuning 
+pm2 stop npm // to stop the app, where npm is the name of the application that we want to stop.
+pm2 delete npm // It will delete the Application where npm is name of application
+
+pm2 start npm --name 'devTinder-Backend' -- start // to start our application and before starting Application we give it a name for that we have used 
+//--name parameter 
+
+Now As our server BackEnd is still running on localhost:3000/ we have to change that so for that we have to change a file  which is 
+named sites-available/
+so for that we have to use **sudo nano /etc/nginx/sites-available/default 
+now this takes us to a default nginx config which we can edit it to connect our FE and BE:
+
+ server_name 43.204.96.49; // Provide your server IP
+
+    location /api/ { # /api/ is the path where backend is Running
+        proxy_pass http://localhost:7777/;  # Pass the request to the Node.js app (URL where your backend is Running)
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade; // everything else same 
+    }
+
+After making the above changes the backend should be restarted using below command
+
+
+ sudo systemctl restart nginx // To restart nginx;
