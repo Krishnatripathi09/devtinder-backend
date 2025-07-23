@@ -499,3 +499,5 @@ After making the above changes the backend should be restarted using below comma
 
 
  sudo systemctl restart nginx // To restart nginx;
+
+ // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_ses_code_examples.html Sending Email Script for V3
