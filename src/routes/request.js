@@ -55,7 +55,6 @@ requestRouter.post(
 
       const emailRes = await sendEmail.run();
 
-      console.log(emailRes);
 
       res.json({
         message: req.user.firstName + " " + status + " in " + toUser.firstName,
