@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-//Handle Auth MiddleWare for all GET,POST,....Requests
+
 const userAuth = async (req, res, next) => {
   //Read the token from req cookies
   //validate the token

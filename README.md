@@ -468,7 +468,7 @@ Updated the sign Up API by setting JWT token when a user signs-up and redirectin
 # Starting our Application on Server:
 pm2 start npm --start // To start the Application 24/7
 
-pm2 logs // To check ths logs for Anay Issues
+pm2 logs // To check ths logs for Any Issues
 
 pm2 flush npm // this command is used to Flush the Logs where npm is the name of the Application for which we want to flush the logs:
 

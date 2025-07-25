@@ -46,11 +46,23 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
-    validateWebhookSignature(
-      JSON.stringify(webhookBody),
-      validateWebhookSignature,
+    const webhookSignature = req.headers["x-Razorpay-Signature"]; // we can also write req.get instead of headers
+
+    const isWebhookValid = validateWebhookSignature(
+      JSON.stringify(req.body),
+      webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     );
+    if (!isWebhookValid) {
+      return res.status(400).json({ message: "Webhook Signature is InValid" });
+    }
+
+    if (req.body.event == "payment.captured") {
+    }
+    if (req.body.event == "payment.failed") {
+    }
+
+    return res.status(200).json({ msg: "WebHook received successfully" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
