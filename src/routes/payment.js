@@ -4,9 +4,11 @@ const paymentRouter = express.Router();
 const razorpayInstance = require("../utils/razorpay");
 const Payment = require("../models/payment");
 const { membershipAmount } = require("../utils/constants");
+const User = require("../models/user");
 const {
   validateWebhookSignature,
 } = require("razorpay/dist/utils/razorpay-utils");
+
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   try {
     const { membershipType } = req.body;
@@ -46,7 +48,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
-    const webhookSignature = req.headers["x-Razorpay-Signature"]; // we can also write req.get instead of headers
+    const webhookSignature = req.get["x-Razorpay-Signature"]; // we can also write req.get instead of headers
 
     const isWebhookValid = validateWebhookSignature(
       JSON.stringify(req.body),
@@ -65,13 +67,16 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     payment.status = paymentDetails.status;
     await payment.save();
 
-    
+    const user = await User.findOne({ _id: payment.userId });
+    user.membershipType = payment.notes.membershipType;
+    await user.save();
+
     //Updat the user as premium :
 
-    if (req.body.event == "payment.captured") {
-    }
-    if (req.body.event == "payment.failed") {
-    }
+    // if (req.body.event == "payment.captured") {
+    // }
+    // if (req.body.event == "payment.failed") {
+    // }
 
     return res.status(200).json({ msg: "WebHook received successfully" });
   } catch (err) {
